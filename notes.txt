@@ -1,0 +1,202 @@
+solutions: ==============================
+	C:\mongodb\bin>mongod --directoryperdb --dbpath C:\mongodb\data\db --logpath C:\mongodb\log\mongo.log --logappend --install
+
+	C:\mongodb\bin>net start MongoDB
+
+
+
+
+start mongo shell: ==============================
+	mongo	
+
+
+mongo-shell ==============================
+	-show dbs
+	-use mycustomers
+	-db
+
+sample json: ==============================
+	{
+		first_name: "John",
+		last_name: "Doe",
+		memberships: ["mem1", "mem2"],
+		address: {
+			street: "4 main st",
+			city: "Boston"
+		}
+		contacts: [
+			{name: "Brad", relationship: "friend"},
+			{name: "Nolram", relationship: "enemy"}
+		]
+	}
+
+
+insert user: ==============================
+	db.createUser({
+		user: "brad",
+		pwd: "1234",
+		roles: ["readWrite", "dbAdmin"]
+	});
+
+
+
+
+create collection or table ==============================
+	db.createCollection('customer');
+
+
+show collection ==============================
+	show collections
+
+
+insert data ==============================
+	db.customers.insert({first_name: "John", last_name: "Doe"});
+
+
+insert multiple: ==============================
+	db.customers.insert([
+		{first_name: "Marlon", last_name: "Hario"},
+		{first_name: "Nolram", last_name: "Oirah"},
+		{first_name: "Hario", last_name: "Marlon", gender: "female"}
+	]);	
+
+show data in collection ==============================
+	db.customers.find();
+
+
+make it nice and net: ==============================
+	db.customers.find().pretty();
+
+
+
+update: ==============================
+	db.customers.update({first_name: "John"}, {first_name: "Ambot", last_name: "Testing", gender: "bakla"});
+
+
+another way to update ==============================
+	db.customers.update({first_name: "Marlon"}, {$set: {gender: "undefine"}});
+
+	db.customers.update({first_name: "Marlon"}, {$set: {age: 45}});
+
+	db.customers.update({first_name: "Marlon"}, {$inc: {age: 5}});
+
+
+remove field ==============================
+	db.customers.update({first_name: "Marlon"}, {$unset: {age: 1}});
+
+
+update and if not exist insert it ==============================
+	db.customers.update({first_name: "Mary"}, {first_name: "Mary", last_name: "Samson"}, {upsert: true});
+
+
+rename field ==============================
+	db.customers.update({first_name: "Marlon"}, {$rename: {"gender":"sex"}}); 	
+
+
+remove documents ==============================
+	db.customers.remove({first_name: "Ambot"}); 	
+
+	db.customers.remove({first_name: "Ambot"}, {justOne:true}); 
+
+
+insert more data ==============================
+	db.customers.insert([
+		{
+			first_name: "Troy",
+			last_name: "Makons",
+			gender: "male",
+			age: 33,
+			address: {
+				street: "432 Essex st",
+				city: "Lawrence",
+				state: "MA"
+			},
+			memberships: ["mem1", "mem2"],
+			balance: 125.32
+		},
+		{
+			first_name: "Beth",
+			last_name: "Jenkins",
+			gender: "female",
+			age: 23,
+			address: {
+				street: "411 Blue st",
+				city: "Boston",
+				state: "MA"
+			},
+			memberships: ["mem2", "mem3"],
+			balance: 505.33
+		},
+		{
+			first_name: "Sharon",
+			last_name: "Thompson",
+			gender: "female",
+			age: 35,
+			address: {
+				street: "19 Willis st",
+				city: "Worchester",
+				state: "MA"
+			},
+			memberships: ["mem1", "mem2"],
+			balance: 99.99
+		},
+		{
+			first_name: "Williams",
+			last_name: "Jackson",
+			gender: "male",
+			age: 43,
+			address: {
+				street: "11 Albany st",
+				city: "Boston",
+				state: "MA"
+			},
+			memberships: ["mem1"],
+			balance: 333.23
+		}
+	])
+
+
+
+
+find query =====================
+	db.customers.find({first_name: "Sharon"});
+
+multiple find query =====================	
+	db.customers.find({$or:[{first_name: "Sharon"}, {first_name: "Troy"}]});
+
+	db.customers.find({"address.city": "Boston"});
+
+	db.customers.find({memberships: "mem1"});
+
+conditional find / 
+	lt(lower than), 
+	gt(greater than), 
+	lte(less than or equal to),
+	gte(greater than or equal to) ===================
+		db.customers.find({age: {$lt:40}}).pretty(); 
+
+
+find and sort asc(1) ===================
+	db.customers.find().sort({last_name:1}).pretty(); 	
+
+find and sort dsc(-1) ===================	
+	db.customers.find().sort({last_name:-1}).pretty(); 	
+
+
+count customers =================
+	db.customers.find().count(); 
+
+	db.customers.find({gender: "male"}).count(); 
+
+
+limit return data ==================
+	db.customers.find({gender: "female"}).limit(2); 
+
+	db.customers.find().limit(4); 
+
+
+combined find limit sort ==================
+	db.customers.find().limit(4).sort({last_name:1}); 	
+
+iteration =================
+	db.customers.find().forEach(function(doc){print("Customer Name: "+doc.first_name)});
